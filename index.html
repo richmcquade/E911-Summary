@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E911 Summary — Medical Details Prototype</title>
+<style>body{margin:0;padding:20px;background:#e9edf2}button{cursor:pointer}@media(max-width:600px){body{padding:5px}}</style>
+</head>
+<body>
+<div id="e911-medical-prototype" aria-label="E911 queue medical details prototype">
+  <style>
+    #e911-medical-prototype {font:14px 'Segoe UI',Arial,sans-serif;color:#202020;background:#fff;border:1px solid #a6a6a6;border-radius:4px;overflow:hidden;max-width:900px;margin:auto;color-scheme:light}
+    #e911-medical-prototype * {box-sizing:border-box}
+    #e911-medical-prototype .titlebar {background:#f4f4f4;padding:7px 10px;border-bottom:1px solid #b6b6b6;font-size:12px;color:#555}
+    #e911-medical-prototype .toolbar {background:#edf5ff;display:flex;flex-wrap:wrap;gap:0;padding:5px 6px;min-height:39px;align-items:center;font-size:12px;border-bottom:1px solid #ddd}
+    #e911-medical-prototype .tool {display:inline-flex;gap:4px;align-items:center;padding:6px 8px;border-right:1px solid #c6c6c6}
+    #e911-medical-prototype .positions {background:#434db0;color:#fff;border-radius:2px;margin-left:4px}
+    #e911-medical-prototype .layout {display:grid;grid-template-columns:190px minmax(0,1fr);height:650px}
+    #e911-medical-prototype .queue {background:#edf5ff;border-right:3px solid #b2b2b2;padding:10px 6px}
+    #e911-medical-prototype .call {background:#afd0df;border:1px solid #7d9ca9;padding:8px 5px;color:#173f55}
+    #e911-medical-prototype .prototype-icon {display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;font-size:19px;line-height:1;font-style:normal}
+    #e911-medical-prototype .popout .prototype-icon {border:1.5px solid currentColor;font-size:19px}
+    #e911-medical-prototype .call-top {display:flex;gap:6px;align-items:center;font-weight:500;flex-wrap:wrap}
+    #e911-medical-prototype .alert {color:#d10018;background:#fff;padding:1px 3px;border:1px solid #dc8f97;font-size:12px}
+    #e911-medical-prototype .call-bottom {display:flex;justify-content:space-between;margin-top:28px;font-size:12px}
+    #e911-medical-prototype .cfs {color:#18729a;text-decoration:underline}
+    #e911-medical-prototype .main {min-height:0;display:flex;flex-direction:column;min-width:0}
+    #e911-medical-prototype .tabs {display:flex;border-bottom:1px solid #aaa;padding-top:2px;font-size:12px}
+    #e911-medical-prototype .tab {padding:4px 6px;background:#eee;border:1px solid #aaa;border-radius:4px 4px 0 0}
+    #e911-medical-prototype .tab.active {background:#fff;border-bottom-color:#fff;margin-bottom:-1px}
+    #e911-medical-prototype .upper {min-height:0;flex:1;overflow:auto;scrollbar-gutter:stable;padding:28px 25px 18px}
+    #e911-medical-prototype .categories {display:flex;flex-wrap:wrap;gap:10px;margin:0 5px 23px;max-width:390px}
+    #e911-medical-prototype .category {font:500 14px 'Segoe UI',Arial,sans-serif;display:inline-flex;align-items:center;gap:5px;background:#fff;color:#525bd7;border:2px solid #6267d9;border-radius:5px;padding:2px 6px;min-height:27px;white-space:nowrap}
+    #e911-medical-prototype .category.phone {color:#db0036;border-color:#e8003d}
+    #e911-medical-prototype .category-break {flex-basis:100%;height:0;margin:-6px 0}
+    #e911-medical-prototype button.category[aria-pressed="true"] {background:#424db6;color:#fff;border-color:#424db6}
+    #e911-medical-prototype button:focus-visible {outline:2px solid #181859;outline-offset:3px}
+    #e911-medical-prototype .summary {border:1px solid #7774ed;border-radius:6px;padding:14px 16px;font-size:13px;line-height:1.5}
+    #e911-medical-prototype .summary-title {font-size:14px;font-weight:500;color:#5854da;margin:0 0 6px}
+    #e911-medical-prototype .summary h3 {font-size:13px;font-weight:500;margin:9px 0 1px}
+    #e911-medical-prototype .summary ul {padding-left:17px;margin:0}
+    #e911-medical-prototype .summary li {margin:3px 0}
+    #e911-medical-prototype .summary-footer {display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:11px;margin-top:10px}
+    #e911-medical-prototype .summary-footer i {color:#505050}
+    #e911-medical-prototype .details {height:337px;flex-shrink:0;display:flex;flex-direction:column;border-top:6px solid #eee;min-height:0}
+    #e911-medical-prototype .details[hidden] {display:none}
+    #e911-medical-prototype .details-bar {display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 7px 5px 13px;border-bottom:1px solid #e5e5e5;flex-shrink:0}
+    #e911-medical-prototype .details-label {font-weight:500;font-size:13px}
+    #e911-medical-prototype .window-actions {display:flex;align-items:center;gap:3px}
+    #e911-medical-prototype .icon-button {display:inline-flex;align-items:center;justify-content:center;width:29px;height:29px;background:#fff;color:#222;border:1px solid transparent;border-radius:2px;padding:4px}
+    #e911-medical-prototype button.icon-button:hover {background:#eee;border-color:#b8b8b8}
+    #e911-medical-prototype .popout {color:#333}
+    #e911-medical-prototype .details-body {overflow:auto;padding:16px 13px;font-size:13px;line-height:1.5}
+    #e911-medical-prototype .provider {display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-weight:500}
+    #e911-medical-prototype .retrieved {font-size:11px;font-weight:400;color:#777;align-self:center}
+    #e911-medical-prototype .profile-title {font-weight:500;margin-bottom:3px}
+    #e911-medical-prototype dl {display:grid;grid-template-columns: minmax(110px,40%) 1fr;margin:0}
+    #e911-medical-prototype dt {font-weight:500}
+    #e911-medical-prototype dd {margin:0;overflow-wrap:anywhere}
+    #e911-medical-prototype .contact {margin:12px 0}
+    #e911-medical-prototype .email {color:#3f43c8;text-decoration:underline}
+    #e911-medical-prototype [data-lucide] {width:17px;height:17px}
+    #e911-medical-prototype .live {position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%)}
+    @media(max-width:600px) {#e911-medical-prototype .layout {grid-template-columns:125px minmax(0,1fr);height:760px}#e911-medical-prototype .upper {padding:18px 10px}#e911-medical-prototype .details {height:360px}#e911-medical-prototype .categories {gap:7px;margin-left:0;margin-right:0}#e911-medical-prototype .summary {padding:11px}#e911-medical-prototype .call-bottom {flex-wrap:wrap;gap:8px}#e911-medical-prototype dl {grid-template-columns:1fr}#e911-medical-prototype dd {margin-bottom:5px}}
+  </style>
+  <div class="titlebar">E911 Queue - PSAP: 1 Phone Position: 6</div>
+  <div class="toolbar" aria-label="Queue toolbar">
+    <span class="tool"><span class="prototype-icon" aria-hidden="true">↕</span>Sort</span>
+    <span class="tool"><span class="prototype-icon" aria-hidden="true">⊗</span>Close Position Calls</span>
+    <span class="tool"><span class="prototype-icon" aria-hidden="true">⊗</span>Close Inactive Calls</span>
+    <span class="tool"><span class="prototype-icon" aria-hidden="true">⇥</span>Export Queue</span>
+    <span class="tool positions"><span class="prototype-icon" aria-hidden="true">☷</span>See All Positions</span>
+  </div>
+  <div class="layout">
+    <aside class="queue" aria-label="Call queue"><div class="call"><div class="call-top"><span>(555) 555-5556</span><span class="alert">Alert</span></div><div class="call-bottom"><span class="cfs">CFS: 123</span><span>RapidSOS</span></div></div></aside>
+    <main class="main">
+      <div class="tabs"><span class="tab active">Call Information</span><span class="tab">Location Data</span></div>
+      <div class="upper">
+        <div class="categories" aria-label="Call information categories">
+          <span class="category phone"><span class="prototype-icon" aria-hidden="true">⚠</span>Phone Alert</span>
+          <span class="category"><span class="prototype-icon" aria-hidden="true">↶</span>E911 History</span>
+          <span class="category"><span class="prototype-icon" aria-hidden="true">➤</span>CFS Nearby</span>
+          <span class="category-break"></span>
+          <span class="category"><span class="prototype-icon" aria-hidden="true">▣</span>Alarm</span>
+          <button type="button" class="category cursor-interaction" id="e911-medical-toggle" aria-pressed="true" aria-expanded="true" aria-controls="e911-medical-pane"><span class="prototype-icon" aria-hidden="true">✱</span>Medical</button>
+        </div>
+        <section class="summary" aria-label="AI Summary">
+          <h2 class="summary-title">AI Summary</h2>
+          <h3>Phone Alert</h3><ul><li>CHRONIC CALLER: Caller may be unable to speak due to severe allergies</li></ul>
+          <h3>E911 History</h3><ul><li>6 previous calls in the past seven days.</li><li>Recorded call types: Medical.</li></ul>
+          <h3>Alarm</h3><ul><li>Home security alarm triggered in the Living Room. Account number: 132966. Contact: John Doeseph.</li><li>The alarm was triggered at 2026-11-16 21:50.</li></ul>
+          <h3>Medical</h3><ul><li>Medical conditions: Allergies (latex), sleep apnea.</li><li>Emergency contacts: Arthur Allen (uncle, +15555555555), Betsy Barry (aunt, +16666666666).</li></ul>
+          <div class="summary-footer"><span class="prototype-icon" aria-hidden="true">✦</span><i>AI can make mistakes. Always verify responses</i><span>Generated: 11/16/2026 16:52</span></div>
+        </section>
+      </div>
+      <section class="details" id="e911-medical-pane" aria-label="Medical data details">
+        <div class="details-bar"><span class="details-label">Medical details</span><div class="window-actions">
+          <button type="button" class="icon-button cursor-interaction" id="e911-medical-close" aria-label="Close medical details" data-tooltip="Close medical details"><span class="prototype-icon" aria-hidden="true">×</span></button>
+          <span class="icon-button popout" role="img" aria-label="Existing popout icon, shown for placement"><span class="prototype-icon" aria-hidden="true">↗</span></span>
+        </div></div>
+        <div class="details-body">
+          <div class="provider"><span>Data Provider: Emergency Health Association</span><span class="retrieved">Retrieved: 11/16/2026 4:52 PM</span></div>
+          <div class="profile-title">Profile</div><dl><dt>Age</dt><dd>56</dd></dl>
+          <div class="profile-title">Emergency contacts</div>
+          <dl class="contact"><dt>Email</dt><dd class="email">arthur@allens.org</dd><dt>Name</dt><dd>Arthur Allen</dd><dt>Phone number</dt><dd>+15555555555</dd><dt>Relation</dt><dd>uncle</dd></dl>
+          <dl class="contact"><dt>Email</dt><dd class="email">betsy@aunts.org</dd><dt>Name</dt><dd>Betsy Barry</dd><dt>Phone number</dt><dd>+16666666666</dd><dt>Relation</dt><dd>aunt</dd></dl>
+          <div class="profile-title">Medical conditions</div><div>Allergies (latex), sleep apnea</div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="live" aria-live="polite" id="e911-medical-status"></div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('e911-medical-prototype');
+  const toggle = root.querySelector('#e911-medical-toggle');
+  const close = root.querySelector('#e911-medical-close');
+  const pane = root.querySelector('#e911-medical-pane');
+  const upper = root.querySelector('.upper');
+  const status = root.querySelector('#e911-medical-status');
+  let selected = true;
+  function render() {
+    toggle.setAttribute('aria-pressed', String(selected));
+    toggle.setAttribute('aria-expanded', String(selected));
+    pane.hidden = !selected;
+  }
+  function update(next, returnFocus) {
+    selected = next;
+    render();
+    upper.scrollTop = 0;
+    if (returnFocus) toggle.focus();
+    status.textContent = selected ? 'Medical selected. Medical details opened.' : 'Medical unselected. Medical details closed. Full AI Summary view restored.';
+  }
+  toggle.addEventListener('click', () => update(!selected, false));
+  close.addEventListener('click', () => update(false, true));
+  render();
+
+
+})();
+</script>
+
+</body>
+</html>
